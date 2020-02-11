@@ -1,11 +1,23 @@
-# Using Google Search Trends for Political Research
+---
+output:
+  md_document:
+    variant: gfm
+---
 
-Using 2018 mid-term search trends data provide by Google at [Google
-Trends datasets](https://googletrends.github.io/data/) page on Github.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(patchwork)
+theme_set(theme_minimal())
+```
+
+## Using Google Search Trends for Political Research
+
+Using 2018 mid-term search trends data provide by Google at [Google Trends datasets](https://googletrends.github.io/data/) page on Github.
 
 ### Get data
 
-``` r
+```{r}
 base_url <- 'https://raw.githubusercontent.com/googletrends/data/master/'
 file_url <- 'Search_Data_US_Congressional_District_04Nov2018.csv'
 
@@ -13,11 +25,12 @@ df <- paste0(base_url, file_url) %>%
   vroom::vroom()
 ```
 
+
 ### Explore Distribution of Search Scores
 
-Use Florida’s 18th as example.
+Use Florida's 18th as example.
 
-``` r
+```{r}
 # distribution of trend scores
 df %>% 
   filter(District == 'Florida 18th') %>% 
@@ -31,12 +44,9 @@ df %>%
   theme(axis.text.y = element_blank())
 ```
 
-![](google_search_trends_politics_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+DRY function to grab and plot top `n` issues and their search volume for a district.
 
-DRY function to grab and plot top `n` issues and their search volume for
-a district.
-
-``` r
+```{r}
 get_top_n <- function(df, district,n=20){
   df %>% 
     filter(District == district) %>% 
@@ -54,18 +64,16 @@ get_top_n <- function(df, district,n=20){
 
 ### Top `n` example
 
-``` r
+```{r}
 get_top_n(df, 'Florida 17th', 10)
 ```
 
-![](google_search_trends_politics_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ### Top 5 issues for Florida
 
-Get top 5 issues for each congressional district in Florida and
-aggregate them.
+Get top 5 issues for each congressional district in Florida and aggregate them.
 
-``` r
+```{r}
 nested_df <- df %>% 
   select(-(FIRST:TENTH), -Code) %>% 
   gather(key,val, -District, -State) %>% 
@@ -86,19 +94,12 @@ top_5_scores %>%
   pander::pander()
 ```
 
-|       key       | top\_mentions | median\_score |
-| :-------------: | :-----------: | :-----------: |
-|   Health care   |      27       |     16.67     |
-|   Immigration   |      27       |     14.66     |
-|    Medicaid     |      27       |     10.4      |
-|    Medicare     |      26       |     12.05     |
-| Social security |      10       |     7.015     |
 
 ### Palm Beach County
 
 Top 5 issues around Palm Beach County
 
-``` r
+```{r}
 p1 <- get_top_n(df,'Florida 21st', 5)
 p2 <- get_top_n(df,'Florida 22nd', 5)
 p3 <- get_top_n(df,'Florida 18th', 5)
@@ -106,4 +107,4 @@ p3 <- get_top_n(df,'Florida 18th', 5)
 p1 + p2 + p3 + plot_layout(ncol = 1)
 ```
 
-![](google_search_trends_politics_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+

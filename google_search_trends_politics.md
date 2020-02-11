@@ -1,4 +1,4 @@
-# Using Google Search Trends for Political Research
+## Using Google Search Trends for Political Research
 
 Using 2018 mid-term search trends data provide by Google at [Google
 Trends datasets](https://googletrends.github.io/data/) page on Github.
